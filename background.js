@@ -1,3 +1,5 @@
+
+
 const extend = function() { //helper function to merge objects
   let target = arguments[0],
       sources = [].slice.call(arguments, 1);
@@ -84,17 +86,9 @@ class Recorder {
       this.input.connect(this.processor);
       this.processor.connect(this.context.destination);
       this.processor.onaudioprocess = function(event) {
-        console.log(event)
-        fetch("localhost:3000/", {
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    method: "POST",
-    body: "JSON.parse(JSON.stringify(event))"
-})
-.then(function(res){ console.log(res) })
-.catch(function(res){ console.log(res) })
+        if(isCap != null) {
+          isCap = null;
+        }
 
         
         for (var ch = 0; ch < numChannels; ++ch)

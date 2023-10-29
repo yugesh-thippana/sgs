@@ -1,6 +1,7 @@
 let interval;
 let timeLeft;
 
+
 const displayStatus = function() { //function to handle the display of time and buttons
   chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
     const status = document.getElementById("status");
