@@ -1,3 +1,4 @@
+const maxTime = 600000;
 
 
 const extend = function() { //helper function to merge objects
@@ -86,11 +87,6 @@ class Recorder {
       this.input.connect(this.processor);
       this.processor.connect(this.context.destination);
       this.processor.onaudioprocess = function(event) {
-        if(isCap != null) {
-          isCap = null;
-        }
-
-        
         for (var ch = 0; ch < numChannels; ++ch)
           buffer[ch] = event.inputBuffer.getChannelData(ch);
         worker.postMessage({ command: "record", buffer: buffer });
@@ -169,8 +165,8 @@ class Recorder {
   onComplete(recorder, blob) {}
 
 }
-
-const audioCapture = (timeLimit, muteTab, format, quality, limitRemoved) => {
+ 
+function audioCapture (timeLimit, muteTab, format, quality, limitRemoved) {
   chrome.tabCapture.capture({audio: true}, (stream) => { // sets up stream for capture
     let startTabId; //tab when the capture is started
     let timeout;
@@ -296,21 +292,20 @@ const startCapture = function() {
       if(!sessionStorage.getItem(tabs[0].id)) {
         sessionStorage.setItem(tabs[0].id, Date.now());
         chrome.storage.sync.get({
-          maxTime: 1200000,
+          maxTime: maxTime,
           muteTab: false,
           format: "mp3",
           quality: 192,
           limitRemoved: false
         }, (options) => {
           let time = options.maxTime;
-          if(time > 1200000) {
-            time = 1200000
+          if(time > maxTime) {
+            time = maxTime
           }
           audioCapture(time, options.muteTab, options.format, options.quality, options.limitRemoved);
         });
         chrome.runtime.sendMessage({captureStarted: tabs[0].id, startTime: Date.now()});
       }
-    // }
   });
 };
 
